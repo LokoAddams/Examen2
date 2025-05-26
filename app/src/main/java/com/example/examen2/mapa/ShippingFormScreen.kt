@@ -14,17 +14,20 @@ import androidx.compose.ui.unit.dp
 import com.google.android.gms.maps.model.CameraPosition
 import com.google.android.gms.maps.model.LatLng
 import com.google.maps.android.compose.*
+import com.google.android.gms.maps.CameraUpdateFactory
+import com.google.maps.android.compose.rememberCameraPositionState
 
 @Composable
 fun ShippingFormScreen() {
     val context = LocalContext.current
 
     var phoneRef by remember { mutableStateOf("") }
-    var selectedPos by remember { mutableStateOf(LatLng(-16.4897, -68.1193)) } // ejemplo Cochabamba
-
-    val cameraState = rememberCameraPositionState {
+    var selectedPos by remember { mutableStateOf(LatLng(-16.4897, -68.1193)) }
+    val cameraState = rememberCameraPositionState{
         position = CameraPosition.fromLatLngZoom(selectedPos, 14f)
     }
+    val markerState = rememberMarkerState(position = selectedPos)
+    val coroutineScope = rememberCoroutineScope()
 
     Column(
         modifier = Modifier
@@ -75,11 +78,12 @@ fun ShippingFormScreen() {
                 onMapClick = { latLng ->
                     selectedPos = latLng
                     // reubica cámara suavemente
-                    cameraState.animate(CameraUpdateFactory.newLatLng(latLng))
+                    cameraState.move(CameraUpdateFactory.newLatLng(latLng))
+                    markerState.position = latLng
                 }
             ) {
                 Marker(
-                    position = selectedPos,
+                    state = markerState,
                     title = "Envio aquí"
                 )
             }
@@ -96,5 +100,7 @@ fun ShippingFormScreen() {
         ) {
             Text("Confirmar envío")
         }
+        Spacer(Modifier.height(16.dp))
+
     }
 }

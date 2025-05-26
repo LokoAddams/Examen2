@@ -68,6 +68,8 @@ fun PlansCarousel(
             .padding(16.dp),
         horizontalAlignment = Alignment.CenterHorizontally
     ) {
+        Spacer(Modifier.height(32.dp))
+
         Text(
             "Nuestros planes móviles",
             fontSize = 28.sp,
